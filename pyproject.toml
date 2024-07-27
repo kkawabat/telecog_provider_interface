@@ -4,11 +4,12 @@ version = "0.1.0"
 description = ""
 authors = ["kan kawabata <kkawabat@asu.edu>"]
 readme = "README.md"
-packages = [{include = "telecog_provider_interface"}]
+packages = [{include = "*", from="src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = "^5.0.7"
+django-phonenumber-field = {extras = ["phonenumberslite"], version = "^8.0.0"}
 
 
 [build-system]
