@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "telecog-provider-interface"
+version = "0.1.0"
+description = ""
+authors = ["kan kawabata <kkawabat@asu.edu>"]
+readme = "README.md"
+packages = [{include = "telecog_provider_interface"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^5.0.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
