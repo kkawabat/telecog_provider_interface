@@ -1,0 +1,15 @@
+{% load crispy_forms_tags %}
+<form action="{% url 'assessment-add' pid=pid %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <input type="submit" value="Schedule Assessment">
+</form>
+
+<script>
+    $(document).ready(function(){
+        $(function () {
+            $('.datetime-input').datetimepicker();
+        });
+    });
+</script>

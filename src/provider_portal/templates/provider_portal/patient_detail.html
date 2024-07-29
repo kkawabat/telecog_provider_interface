@@ -1,0 +1,71 @@
+{% extends "base.html"%}
+{% load static %}
+
+{% block extraref %}
+    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+{% endblock extraref %}
+
+{% block body %}
+
+<div style="margin:2em;">
+    <div style="display:flex; flex-direction:row;">
+        <h1>{{patient.full_name}}</h1>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="assessment-scheduled-tab" data-bs-toggle="tab" data-bs-target="#assessment" type="button" role="tab" aria-controls="assessment" aria-selected="false">Scheduled Assessment</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="assessment-history-tab" data-bs-toggle="tab" data-bs-target="#assessment_history" type="button" role="tab" aria-controls="assessment_history" aria-selected="false">Assessment History</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button" role="tab" aria-controls="report" aria-selected="false">Reports</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" style="margin:1em;">
+            <p>Phone Number: {{patient.phone_number}}</p>
+            <p>Email: {{patient.email}}</p>
+            <p>Age: {{patient.age}}</p>
+            <p>Gender: {{patient.gender}}</p>
+        </div>
+        <div class="tab-pane fade" id="assessment" role="tabpanel" aria-labelledby="assessment-scheduled-tab">
+            {% include 'provider_portal/patient_detail_tabs/assessment_scheduled.html' with scheduled_assessment_list=scheduled_assessment_list patient=patient %}
+        </div>
+        <div class="tab-pane fade" id="assessment_history" role="tabpanel" aria-labelledby="assessment-history-tab">
+            {% include 'provider_portal/patient_detail_tabs/assessment_history.html' with assessment_history_list=assessment_history_list patient=patient %}
+        </div>
+        <div class="tab-pane fade" id="report" role="tabpanel" aria-labelledby="report-tab">
+            {% include 'provider_portal/patient_detail_tabs/assessment_reports.html' %}
+        </div>
+    </div>
+
+
+    {% include "provider_portal/popup_modal.html" %}
+    <script>
+        let scheduled_assessment_table = new DataTable('#scheduledAssessmentTable', {language: {lengthMenu: 'Displaying _MENU_ entries out of {{assessment_list|length}}'}});
+        let assessment_history_table = new DataTable('#assessmentHistoryTable', {language: {lengthMenu: 'Displaying _MENU_ entries out of {{assessment_list|length}}'}});
+        let report_table = new DataTable('#reportTable', {language: {lengthMenu: 'Displaying _MENU_ entries out of {{report_list|length}}'}});
+
+        <!--ref: https://medium.com/@antoinewg/simple-modal-to-open-details-of-an-item-django-bootstrap-ffeeb11f12c1-->
+        $(document).on("click", "#add_assessment_btn", function (e) {
+            e.preventDefault();
+            var $popup = $("#popup");
+            var popup_url = $(this).attr('url')
+            $(".modal-body", $popup).load(popup_url, function () {
+                $popup.modal("show");
+            });
+        });
+    </script>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'jquery.datetimepicker.min.css' %}" />
+<script src="{% static 'jquery.datetimepicker.full.js' %}"></script>
+{% endblock body %}
+

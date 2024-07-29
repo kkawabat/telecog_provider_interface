@@ -1,0 +1,20 @@
+<button id="add_assessment_btn" url="{% url 'assessment-add-form' pid=patient.pid %}" class="btn btn-primary" style="margin:1em;">Schedule an Assessment</button>
+<table id="scheduledAssessmentTable">
+    <thead>
+    <tr><th>Assessment</th><th>Status</th><th>Scheduled Date</th><th></th><th></th><td></td></tr>
+    </thead>
+    <tbody>
+        {% for assessment in scheduled_assessment_list %}
+            <tr>
+                <td>{{ assessment.type }}</td>
+                <td>{{ assessment.status }}</td>
+                <td>{{ assessment.scheduled_date }}</td>
+                <td><a href="{% url 'assessment-edit' pid=patient.pid pk=assessment.pk %}" class="btn btn-success">Change Schedule</a></td>
+                <td><a href="{% url 'assessment-run' pid=patient.pid pk=assessment.pk %}" class="btn btn-success">Start Now</a></td>
+                <td><a href="{% url 'assessment-delete' pid=patient.pid pk=assessment.pk %}" class="btn btn-danger">Delete</a></td>
+            </tr>
+        {% empty %}
+            <tr><td>No Scheduled Assessment</td><td></td><td></td><td></td><td></td><td></td></tr>
+        {% endfor %}
+    </tbody>
+</table>

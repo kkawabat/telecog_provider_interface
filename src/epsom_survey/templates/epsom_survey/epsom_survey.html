@@ -1,0 +1,9 @@
+{% extends "base.html"%}
+{% load static %}
+{% load crispy_forms_tags %}
+<form action="{% url 'epsom-submit' pk=pk %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <input type="submit" value="Finish Epsom">
+</form>

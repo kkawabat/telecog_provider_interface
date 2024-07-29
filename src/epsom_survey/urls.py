@@ -14,11 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+
+from epsom_survey.views import epsom_run
+from provider_portal.views import PatientList, PatientDetailView, patient_add, patient_delete, PatientAddView, AssessmentAddView, assessment_add, assessment_detail, assessment_run, assessment_edit
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('provider_portal/', include('provider_portal.urls')),
-    path('epsom_survey/', include('epsom_survey.urls')),
+    path('<slug:pk>', epsom_run, name='epsom-survey'),
 ]

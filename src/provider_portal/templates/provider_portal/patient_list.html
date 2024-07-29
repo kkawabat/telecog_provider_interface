@@ -1,0 +1,48 @@
+{% extends "base.html"%}
+
+{% block extraref %}
+    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+{% endblock extraref %}
+
+{% block body %}
+
+<div style="margin:2em;">
+    <h1>Patient List</h1>
+    <div>
+    <button id="add_patient_btn" url="{% url 'patient-add-form' %}" class="btn btn-primary" style="margin:1em;">Add new Patient</button>
+    </div>
+
+    <table id="patientTable">
+        <thead>
+        <tr><th>Patient Name</th><th>Phone number</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for patient in object_list %}
+                <tr>
+                    <td><a href="{% url 'patient-detail' pid=patient.pid %}">{{ patient.full_name }}</a></td>
+                    <td>{{ patient.phone_number }}</td>
+                    <td><a href="{% url 'patient-delete' pid=patient.pid %}" class="btn btn-danger">Remove Patient</a></td>
+                </tr>
+            {% empty %}
+                <tr><td>No patients found</td><td></td><td></td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        let table = new DataTable('#patientTable', {language: {lengthMenu: 'Displaying _MENU_ entries out of {{object_list|length}}'}});
+
+        <!--ref: https://medium.com/@antoinewg/simple-modal-to-open-details-of-an-item-django-bootstrap-ffeeb11f12c1-->
+        $(document).on("click", "#add_patient_btn", function (e) {
+            e.preventDefault();
+            var $popup = $("#popup");
+            var popup_url = $(this).attr('url')
+            $(".modal-body", $popup).load(popup_url, function () {
+                $popup.modal("show");
+            });
+        });
+    </script>
+</div>
+{% include "provider_portal/popup_modal.html" %}
+{% endblock body %}

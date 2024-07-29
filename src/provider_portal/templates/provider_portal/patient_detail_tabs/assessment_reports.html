@@ -1,0 +1,14 @@
+<table id="reportTable">
+    <thead>
+    <tr><th>Report Name</th></tr>
+    </thead>
+    <tbody>
+        {% for report in report_list %}
+            <tr>
+                <td><a href="{% url 'report-detail' pk=report.pk %}" class="btn btn-success">{{report.name}}</a></td>
+            </tr>
+        {% empty %}
+            <tr><td>No reports exist for patient</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
