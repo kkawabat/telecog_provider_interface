@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.urls import path
 
-from epsom_survey.views import epsom_run
-from provider_portal.views import PatientList, PatientDetailView, patient_add, patient_delete, PatientAddView, AssessmentAddView, assessment_add, assessment_detail, assessment_run, assessment_edit
+from epsom_survey.views import EpsomSurveyView, epsom_submit
+
 
 urlpatterns = [
-    path('<slug:pk>', epsom_run, name='epsom-survey'),
+    path('<slug:pk>', EpsomSurveyView.as_view(), name='epsom-survey'),
+    path('<slug:pk>/submit', epsom_submit, name='epsom-submit'),
 ]

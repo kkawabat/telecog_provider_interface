@@ -9,6 +9,7 @@
 
     <title>{% block title %}Linus Health{% endblock title %}</title>
     {% block ref %}
+        <link rel="shortcut icon" href="{% static 'icon.svg' %}">
         <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
         <link href="{% static 'main.css' %}" rel="stylesheet" type="text/css"/>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
@@ -19,6 +20,20 @@
     {% endblock extraref %}
 </head>
 <body>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#" style="margin-left:2em;">
+            <img src="{% static 'logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+            Linus Health
+        </a>
+
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Patients</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     {% block body %}{% endblock body %}
     {% include 'message.html' %}

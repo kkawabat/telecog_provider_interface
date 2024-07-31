@@ -1,9 +1,132 @@
 {% extends "base.html"%}
 {% load static %}
+
+{% block extraref %}
+    <link rel="stylesheet" href="{% static 'epsom_survey/epsom_survey.css' %}">
+{% endblock extraref %}
+
 {% load crispy_forms_tags %}
-<form action="{% url 'epsom-submit' pk=pk %}" method="post" enctype="multipart/form-data">
+{% block body %}
+
+<div class="tab-content" id="myTabContent">
+    {% include 'epsom_survey/form_type1.html' with task_id='q1' task_prompt='What matters most to me about my daily tasks is:' %}
+    {% include 'epsom_survey/form_type1.html' with task_id='q2' task_prompt='What matters most to me about the enjoyable things in my life is:' %}
+    {% include 'epsom_survey/form_type1.html' with task_id='q3' task_prompt='What matters most to me about relationships and social connections in my life is:' %}
+    {% include 'epsom_survey/form_type1.html' with task_id='q4' task_prompt='What matters most to me about my thinking skills is:' %}
+    {% include 'epsom_survey/form_type1.html' with task_id='q5' task_prompt='What matters most to me about my sense of who I am as a person is:' %}
+    {% include 'epsom_survey/form_type1.html' with task_id='q6' task_prompt='If there is anything else that is important to you, please write your answer in the box below.' %}
+    {% include 'epsom_survey/form_top5.html' with task_id='q7' %}
+    {% include 'epsom_survey/form_type2.html' with task_id='q8' %}
+    {% include 'epsom_survey/form_type2.html' with task_id='q9' %}
+    {% include 'epsom_survey/form_type2.html' with task_id='q10' %}
+    {% include 'epsom_survey/form_type2.html' with task_id='q11' %}
+    {% include 'epsom_survey/form_type2.html' with task_id='q12' %}
+    {% include 'epsom_survey/form_type3.html' with task_id='q13' %}
+    {% include 'epsom_survey/epsom_completion_screen.html' %}
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#myTabContent').find(">:first-child").toggleClass("show active");
+
+        $('button.anotherBtn').on('click', function(){
+            var i = $(this).prev().find('.important_txt').length + 1
+            var label = `<p class='answer-label'>Answer ${i} (Optional):</p>`
+            var txt = "<input class='important_txt' type='text'>"
+            $(this).prev().append(label, txt)
+        });
+
+        $('button.nextBtn').on('click', function(){
+            var cur_active_tab = $('.tab-pane.active')
+            cur_active_tab.removeClass('active show')
+            next_active_tab = cur_active_tab.next()
+            next_active_tab.addClass('active show')
+            var next_id = next_active_tab.attr('id');
+            if (next_id == 'q7'){ reload_important5(); }
+            else if (['q8', 'q9', 'q10', 'q11', 'q12'].indexOf(next_id) > -1){ reload_confident(next_id)}
+            else if (next_id == 'q_complete'){ submit_epsom() }
+        });
+
+        $('button.backBtn').on('click', function(){
+            var cur_active_tab = $('.tab-pane.active')
+            cur_active_tab.removeClass('active show')
+            next_active_tab = cur_active_tab.prev()
+            next_active_tab.addClass('active show')
+            var next_id = next_active_tab.attr('id');
+            if (['q8', 'q9', 'q10', 'q11', 'q12'].indexOf(next_id) > -1){ reload_confident(next_id)}
+        });
+    });
+
+    function reload_important5(){
+        var important_list = [];
+        $('.important_txt').map(function(){
+            if (this.value != ''){
+                important_list.push(this.value)
+            }
+        })
+
+        $('#important-list').empty()
+        for (let n = 0, len = important_list.length; n < len; n++) {
+            var important = important_list[n];
+            var option = `<div class="form-check"><input class="form-check-input important_item" type="checkbox" value="" id="top5check${n}"><label class="form-check-label" for="top5check${n}">${important}</label></div>`
+            $('#important-list').append(option)
+        }
+
+        var important_item = $("input.important_item[type='checkbox']");
+        important_item.click(function(e) {
+            if (important_item.filter(":checked").length > 5) {
+                alert('Please only select 5 items.');
+                e.preventDefault()
+            }
+        });
+    }
+
+    function reload_confident(next_id){
+        var idx = parseInt(next_id.slice(1, next_id.length + 1)) - 8;
+        var checkbox_id = $(`#important-list input.important_item[type='checkbox']:checked`)[idx].id;
+        var prompt = $(`label[for=${checkbox_id}]`)[0].innerHTML
+        var prompt_id = '#' + next_id + '-prompt'
+        $(prompt_id).text(prompt)
+    }
+
+    function fetch_important(div_id){
+        var important_list = [];
+        $(`${div_id}`).find('.important_txt').map(function(){
+            if (this.value != ''){
+                important_list.push(this.value)
+            }
+        })
+        return important_list;
+    }
+
+    function submit_epsom(){
+
+        for (i = 1; i <=6; i++){
+            var important_list = fetch_important(`#q${i}`);
+            $(`#id_epsom_q${i}`).val(JSON.stringify(important_list))
+        }
+
+        var important_list = []
+        $(`#important-list input.important_item[type='checkbox']:checked`).map(function(){
+            var important_txt = $(`label[for=${this.id}]`)[0].innerHTML
+            important_list.push(important_txt)
+        })
+        $('#id_epsom_q7').val(JSON.stringify(important_list))
+
+        for (i = 8; i <=13; i++){
+            var checked_radio_id = $(`#q${i}-option-div input.btn-check[type='radio']:checked`)[0].id
+            var checked_radio_value = $(`label[for=${checked_radio_id}]`)[0].innerHTML
+            $(`#id_epsom_q${i}`).val(checked_radio_value)
+        }
+
+        document.getElementById("epsomForm").submit();
+    }
+</script>
+
+
+<form id='epsomForm' action="{% url 'epsom-submit' pk=pk %}" method="post" enctype="multipart/form-data" hidden>
     {% csrf_token %}
     {{ form|crispy }}
-
-    <input type="submit" value="Finish Epsom">
 </form>
+
+{% endblock body %}

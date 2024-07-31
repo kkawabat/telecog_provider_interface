@@ -1,15 +1,12 @@
 import uuid
+from datetime import datetime
 
-from django import forms
 from django.db import models
-from django.db.models import Model
-from django.forms import DateTimeInput
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class Patient(Model):
+class Patient(models.Model):
     pid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=30)
     phone_number = PhoneNumberField(region='US')
@@ -28,16 +25,11 @@ class Patient(Model):
     )
 
 
-class PatientAddForm(forms.ModelForm):
-    class Meta:
-        model = Patient
-        fields = '__all__'
-
-
-class Assessment(Model):
+class Assessment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     scheduled_date = models.DateTimeField('scheduled date')
+
     survey_url = models.URLField()
 
     class Status(models.TextChoices):
@@ -61,29 +53,12 @@ class Assessment(Model):
         return super().save(*args, **kwargs)
 
 
-class AssessmentAddForm(forms.ModelForm):
-    scheduled_date = forms.DateTimeField(widget=DateTimeInput(attrs={'class': "datetime-input"}),
-                                         input_formats=['%Y/%m/%d %H:%M'])
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.patient_pid = None
-
-    class Meta:
-        model = Assessment
-        fields = ['type', 'scheduled_date']
-
-    def save(self, commit=True):
-        assessment = super(AssessmentAddForm, self).save(commit=False)
-        assessment.Status = 'Scheduled'
-        assessment.patient = get_object_or_404(Patient, pk=self.patient_pid)
-        if commit:
-            assessment.save()
-        return assessment
+class AssessmentData(models.Model):
+    assessment = models.OneToOneField(Assessment, on_delete=models.CASCADE, primary_key=True)
+    completion_date = models.DateTimeField(default=datetime.now())
 
 
-class AssessmentReport(Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+class AssessmentReport(models.Model):
+    assessment = models.OneToOneField(Assessment, on_delete=models.CASCADE, primary_key=True)
     name = models.TextField()
     url = models.URLField()

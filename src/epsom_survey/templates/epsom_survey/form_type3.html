@@ -1,0 +1,16 @@
+<div class="tab-pane fade" id="{{task_id}}" role="tabpanel" aria-labelledby="{{task_id}}-tab">
+    <h4>Did someone assist you in completing these questions today?</h4>
+    <h3 id="{{task_id}}-prompt"></h3>
+    <div id="{{task_id}}-option-div" class='option-div'>
+        <input type="radio" class="btn-check" name="{{task_id}}-options" id="{{task_id}}-option1" autocomplete="off">
+        <label class="btn btn-outline-primary" for="{{task_id}}-option1">Yes</label>
+
+        <input type="radio" class="btn-check" name="{{task_id}}-options" id="{{task_id}}-option2" autocomplete="off">
+        <label class="btn btn-outline-primary" for="{{task_id}}-option2">No</label>
+    </div>
+
+    <div class='back-next-btn-div'>
+        <button class="backBtn button-17">Back</button>
+        <button class="nextBtn button-17">Next</button>
+    </div>
+</div>
