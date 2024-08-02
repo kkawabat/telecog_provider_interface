@@ -1,0 +1,64 @@
+{% extends "base.html"%}d
+{% load static %}
+{% block extraref %}
+    <link rel="stylesheet" href="{% static 'epsom_survey/epsom_result.css' %}">
+{% endblock extraref %}
+{% load crispy_forms_tags %}
+
+{% block header %}{% endblock header %}
+
+{% block body %}
+    <div class="pageA4 first-page">
+        <div id="bhp-header">
+            <h4>{{first_name}}'s Personalized Brain Health Plan</h4>
+            <img src="{% static 'logo2.png' %}" height="5px" class="d-inline-block align-top" alt="">
+        </div>
+        <p>The tests you did today gave us information about your priorities in life, how confident you feel in each of these areas, and your overall health and lifestyle. We have taken the information you provided to create a personalized roadmap to help you keep doing the things that matter to you the most</p>
+
+        <h4 class="highlight">Your priorities Areas to Maintain</h4>
+        <br>
+        <p> Below are the areas you indicated are important to you. You also rated how confident you feel doing these activities. These are important areas to pay attention to over times.</p>
+        <div class="important-table">
+            {% for important, level in important_areas %}
+                <div class="important-row">
+                    <h5 style="width: 50%">{{important}}</h5>
+                    {% include 'epsom_survey/epsom_result_progress_bar.html' with level=level %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <h4 class="highlight">Your Healthy Habits Risk Factors</h4>
+        <div class="risk-factor-div">
+            <div class="risk-factor-subdiv">
+                <h5 class="risk-factor-subheader" style="border-radius: 0 10px 10px 10px;">Where you are doing well</h5>
+                <div class="rsik-factor-subsubdiv">
+                    <p>In these areas, you are doing great! keep up the good work!</p>
+                    <div>
+                        <h5>Keep your health in check</h5>
+                        <h5>Get good rest</h5>
+                        <h5>Eat Green and Lean</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="risk-factor-subdiv" >
+                <h5 class="risk-factor-subheader" style="border-radius: 10px 10px 0 10px;">What to focus on</h5>
+                <div class="rsik-factor-subsubdiv">
+                    <p>Focus on these areas. Small steps lead to success! Read more in the next pages</p>
+                    <div>
+                        <h5>Stay true to your purpose</h5>
+                        <h5>Build your village</h5>
+                        <h5>Move every day</h5>
+                        <h5>Learn something new</h5>
+                        <h5>Be mindful about your mental health</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pageA4 img-page"><img src="{% static 'epsom_report/p2.png' %}" ></div>
+    <div class="pageA4 img-page"><img src="{% static 'epsom_report/p3.png' %}" ></div>
+    <div class="pageA4 img-page"><img src="{% static 'epsom_report/p4.png' %}" ></div>
+    <div class="pageA4 img-page"><img src="{% static 'epsom_report/p5.png' %}" ></div>
+    <div class="pageA4 img-page"><img src="{% static 'epsom_report/p6.png' %}" ></div>
+{% endblock body %}

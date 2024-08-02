@@ -1,11 +1,11 @@
-from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView
 
-from provider_portal.models import Patient, Assessment, AssessmentReport
 from provider_portal.forms import AssessmentAddForm, PatientAddForm
+from provider_portal.models import Patient, Assessment
+from utils.email import send_epsom_result
 from utils.twilio import send_sms
 
 
@@ -79,8 +79,11 @@ def assessment_add(request, pid):
 
 
 def assessment_detail(request, pid, pk):
-
-    pass
+    assessment = get_object_or_404(Assessment, pk=pk)
+    if assessment.type == 'ePSOM':
+        return assessment.assessmentdata.epsomsurvey.generate_result_html(request)
+    messages.error(request, 'No result found for assessment.')
+    return redirect('patient-detail', pid=pid)
 
 
 def assessment_run(request, pid, pk):
@@ -89,6 +92,21 @@ def assessment_run(request, pid, pk):
 
     if assessment.type == 'ePSOM':
         send_epsom_invite(request, patient, assessment)
+        messages.success(request, f"epsom invite sent to {patient.full_name}")
+    else:
+        messages.error(request, "only epsom assessment is supported atm.")
+    return redirect('patient-detail', pid=pid)
+
+
+def assessment_email(request, pid, pk):
+    assessment = get_object_or_404(Assessment, pk=pk)
+    patient = get_object_or_404(Patient, pid=pid)
+
+    if assessment.type == 'ePSOM':
+        epsom_pdf = assessment.assessmentdata.epsomsurvey.generate_result_pdf()
+        patient_name = patient.full_name.split(' ')[0]
+        patient_email = patient.email
+        send_epsom_result(patient_name, patient_email, epsom_pdf)
         messages.success(request, f"epsom invite sent to {patient.full_name}")
     else:
         messages.error(request, "only epsom assessment is supported atm.")

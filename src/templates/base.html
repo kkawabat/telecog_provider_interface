@@ -12,7 +12,7 @@
         <link rel="shortcut icon" href="{% static 'icon.svg' %}">
         <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
         <link href="{% static 'main.css' %}" rel="stylesheet" type="text/css"/>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" type="text/css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     {% endblock ref %}
@@ -20,6 +20,8 @@
     {% endblock extraref %}
 </head>
 <body>
+    {% include 'message.html' %}
+    {% block header %}
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#" style="margin-left:2em;">
             <img src="{% static 'logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -34,11 +36,10 @@
             </ul>
         </div>
     </nav>
-
+    {% endblock header %}
     {% block body %}{% endblock body %}
-    {% include 'message.html' %}
     <script>
-        $(document).ready(function(){$(".start-toast").toast('show');});
+        $(document).ready(function(){$(".toast").toast('show');});
     </script>
 </body>
 </html>

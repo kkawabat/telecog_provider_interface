@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 
-from provider_portal.views import PatientList, PatientDetailView, patient_add, patient_delete, PatientAddView, AssessmentAddView, assessment_add, assessment_detail, assessment_run, assessment_edit, assessment_delete
+from provider_portal.views import PatientList, PatientDetailView, patient_add, patient_delete, PatientAddView, AssessmentAddView, assessment_add, assessment_detail, assessment_run, assessment_edit, assessment_delete, assessment_email
 
 urlpatterns = [
     path('patients/', PatientList.as_view(), name='patient-list'),
@@ -29,5 +29,6 @@ urlpatterns = [
     path('patients/<slug:pid>/assessment/<slug:pk>', assessment_detail, name='assessment-detail'),
     path('patients/<slug:pid>/assessment/<slug:pk>/run', assessment_run, name='assessment-run'),
     path('patients/<slug:pid>/assessment/<slug:pk>/edit', assessment_edit, name='assessment-edit'),
-    path('patients/<slug:pid>/assessment/<slug:pk>/edit', assessment_delete, name='assessment-delete'),
+    path('patients/<slug:pid>/assessment/<slug:pk>/email', assessment_email, name='assessment-email'),
+    path('patients/<slug:pid>/assessment/<slug:pk>/delete', assessment_delete, name='assessment-delete'),
 ]

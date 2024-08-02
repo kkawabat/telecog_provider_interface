@@ -1,6 +1,6 @@
 <table id="assessmentHistoryTable">
     <thead>
-    <tr><th>Assessment</th><th>Status</th><th>Completion Date</th><th>Assessment Result</th></tr>
+    <tr><th>Assessment</th><th>Status</th><th>Completion Date</th><th></th><th></th></tr>
     </thead>
     <tbody>
         {% for assessment in assessment_history_list %}
@@ -8,10 +8,11 @@
                 <td>{{ assessment.type }}</td>
                 <td>{{ assessment.status }}</td>
                 <td>{{ assessment.assessmentdata.completion_date }}</td>
-                <td><a href="{% url 'assessment-detail' pid=patient.pid pk=assessment.pk %}" class="btn btn-success">View Result</a></td>
+                <td><a target="_blank" href="{% url 'assessment-detail' pid=patient.pid pk=assessment.pk %}" class="btn btn-success">View Result</a></td>
+                <td><a href="{% url 'assessment-email' pid=patient.pid pk=assessment.pk %}" class="btn btn-success">Email Result</a></td>
             </tr>
         {% empty %}
-            <tr><td>No Assessment history</td><td></td><td></td><td></td></tr>
+            <tr><td>No Assessment history</td><td></td><td></td><td></td><td></td></tr>
         {% endfor %}
     </tbody>
 </table>

@@ -1,8 +1,16 @@
+import os
+from os.path import join, abspath, dirname
+
+import pdfkit
 from django import forms
 from django.db import models, transaction
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.templatetags.static import static
 
-from provider_portal.models import AssessmentData, Assessment
+import epsom_survey
+from provider_portal.models import AssessmentData
+from telecog_provider_interface.settings import BASE_DIR
 
 SPECTRUM_CHOICES = {
     "NOTATALL": "Not at all",
@@ -32,6 +40,33 @@ class EpsomSurvey(AssessmentData):
     epsom_q11 = models.TextField()
     epsom_q12 = models.TextField()
     epsom_q13 = models.TextField()
+
+    def generate_result_html(self, request=None):
+        context = {'wkhtmltopdf': False,
+                   'first_name': self.assessment.patient.full_name.split()[0],
+                   'important_areas': list(zip(list(self.epsom_q7), [self.epsom_q8, self.epsom_q9, self.epsom_q10, self.epsom_q11, self.epsom_q12, self.epsom_q13]))}
+
+        if request is None:
+            return render_to_string('epsom_survey/epsom_result.html', context=context)
+
+        return render(request, 'epsom_survey/epsom_result.html', context=context)
+
+    def generate_result_pdf(self):
+        config = pdfkit.configuration(wkhtmltopdf=os.environ['WKHTMLTOPDF_PATH'])
+        html_str = self.generate_result_html()
+        css_path = 'file:///' + join(dirname(abspath(epsom_survey.__file__)), 'static', 'epsom_survey', 'epsom_result.css')
+        html_str = html_str.replace('/static/epsom_survey/epsom_result.css', css_path)
+        css_path = 'file:///' + join(dirname(abspath(epsom_survey.__file__)), 'static', 'epsom_report')
+        html_str = html_str.replace('/static/epsom_report/', css_path + '\\')
+        css_path = 'file:///' + join(dirname(dirname(abspath(epsom_survey.__file__))), 'static', 'main.css')
+        html_str = html_str.replace('/static/main.css', css_path)
+        css_path = 'file:///' + join(dirname(dirname(abspath(epsom_survey.__file__))), 'static', 'logo2.png')
+        html_str = html_str.replace('/static/logo2.png', css_path)
+        css_path = 'file:///' + join(dirname(dirname(abspath(epsom_survey.__file__))), 'static', 'icon.svg')
+        html_str = html_str.replace('/static/icon.svg', css_path)
+        print(html_str)
+        pdf_file = pdfkit.from_string(html_str, False, configuration=config, options={"enable-local-file-access": ""})
+        return pdf_file
 
 
 class EpsomSurveyForm(forms.ModelForm):
